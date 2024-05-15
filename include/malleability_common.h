@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef _DEEPSEA_COMMON_H
-#define _DEEPSEA_COMMON_H
+#ifndef _MALLEABILITY_COMMON_H
+#define _MALLEABILITY_COMMON_H
 
 #include "protocol.h"
 #include "queue.h"

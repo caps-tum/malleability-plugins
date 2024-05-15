@@ -11,7 +11,9 @@
 #include "src/common/slurm_protocol_api.h"
 #include "src/common/xmalloc.h"
 #include "src/common/xstring.h"
-#include "src/interfaces/select.h"
+// after 22.05
+//#include "src/interfaces/select.h"
+#include "src/common/select.h"
 
 // deep-sea headers
 #include "dynpm_config.h"

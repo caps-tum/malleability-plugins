@@ -66,13 +66,13 @@
 #include "src/common/net.h"
 #include "src/common/proc_args.h"
 #include "src/common/read_config.h"
-#include "src/interfaces/auth.h"
-#include "src/interfaces/jobacct_gather.h"
+//#include "src/interfaces/auth.h"
+//#include "src/interfaces/jobacct_gather.h"
 #include "src/common/slurm_opt.h"
 #include "src/common/slurm_protocol_api.h"
 #include "src/common/slurm_rlimits_info.h"
-#include "src/common/spank.h"
-#include "src/interfaces/switch.h"
+//#include "src/common/spank.h"
+//#include "src/interfaces/switch.h"
 #include "src/common/uid.h"
 #include "src/common/xmalloc.h"
 #include "src/common/xsignal.h"
@@ -202,7 +202,7 @@ int srun(int ac, char **av)
 	// see the (info output) detail below
 
 	char *name = NULL;
-	hostlist_t *hl = hostlist_create(job->step_ctx->step_resp->step_layout->node_list);
+	hostlist_t hl = hostlist_create(job->step_ctx->step_resp->step_layout->node_list);
 	int i = 0;
 	while ((name = hostlist_shift(hl))) {
 		info("host: %s", name);

@@ -1,13 +1,11 @@
-#drun_CPPFLAGS = $(AM_CPPFLAGS) -I$(SLURM_SOURCE)/src/srun/libsrun/
-drun_CPPFLAGS = $(AM_CPPFLAGS) -I$(SLURM_SOURCE)/src/srun/
+mrun_CPPFLAGS = $(AM_CPPFLAGS) -I$(SLURM_SOURCE)/src/srun/libsrun/
 
-bin_PROGRAMS += drun
+bin_PROGRAMS += mrun
 
-# $(SLURM_SOURCE)/src/srun/srun.wrapper.c \ this one is replaced with drun
-drun_SOURCES = src/drun/drun.c \
-			   src/drun/srun.c \
-			   src/drun/launch.c \
-			   src/drun/step_launch.c \
+mrun_SOURCES = src/mrun/mrun.c \
+			   src/mrun/srun.c \
+			   src/mrun/launch.c \
+			   src/mrun/step_launch.c \
 			   $(SLURM_SOURCE)/src/srun/allocate.c \
 			   $(SLURM_SOURCE)/src/srun/allocate.h \
 			   $(SLURM_SOURCE)/src/srun/debugger.c \
@@ -27,12 +25,12 @@ drun_SOURCES = src/drun/drun.c \
 			   $(SLURM_SOURCE)/src/srun/task_state.c \
 			   $(SLURM_SOURCE)/src/srun/task_state.h
 
-drun_LDADD = $(SLURM_BUILD)/src/bcast/libfile_bcast.la
+mrun_LDADD = $(SLURM_BUILD)/src/bcast/libfile_bcast.la
 
-drun_DEPENDENCIES = $(SLURM_BUILD)/src/bcast/libfile_bcast.la \
+mrun_DEPENDENCIES = $(SLURM_BUILD)/src/bcast/libfile_bcast.la \
 					$(SLURM_BUILD)/src/api/full_version.map \
 					$(SLURM_BUILD)/src/api/libslurmfull.la
 
-drun_LDFLAGS = -export-dynamic -ldl -Wl,-rpath=${exec_prefix}/lib/slurm \
+mrun_LDFLAGS = -export-dynamic -ldl -Wl,-rpath=${exec_prefix}/lib/slurm \
 			   -L$(SLURM_BUILD)/src/api/.libs -lslurmfull \
 			   -L${LIBDYNPM_INSTALL}/lib/ -ldynpmnetwork -ldynpmconfig -lbz2

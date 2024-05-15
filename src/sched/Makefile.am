@@ -1,13 +1,13 @@
 # scheduler plugin
-sched_deepsea_la_CPPFLAGS = $(AM_CPPFLAGS) -Isrc/sched/
-lib_LTLIBRARIES += sched_deepsea.la
+sched_malleable_la_CPPFLAGS = $(AM_CPPFLAGS) -Isrc/sched/
+lib_LTLIBRARIES += sched_malleable.la
 
-sched_deepsea_la_SOURCES = src/sched/sched_deepsea.c \
+sched_malleable_la_SOURCES = src/sched/sched_malleable.c \
 						   src/sched/malleability.c
 
-sched_deepsea_la_LDFLAGS = -module -avoid-version --export-dynamic \
+sched_malleable_la_LDFLAGS = -module -avoid-version --export-dynamic \
 						   -L${LIBDYNPM_INSTALL}/lib/ -ldynpmnetwork -ldynpmconfig
-sched_deepsea_la_LIBADD =
+sched_malleable_la_LIBADD =
 
 # simulator program that mimics the controller and scheduler threads
 #simulator_CPPFLAGS = $(AM_CPPFLAGS) -I$(SLURM_SOURCE)/src/slurmctld/ -I$(SLURM_SOURCE)/src/plugins/sched/backfill/

@@ -13,19 +13,19 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 lib_LTLIBRARIES =
 
-#include src/mpi/Makefile.am
+include src/mpi/Makefile.am
 include src/sched/Makefile.am
-#include src/select/Makefile.am
-#include src/switch/Makefile.am
+include src/select/Makefile.am
+# include src/switch/Makefile.am
 
-#include src/drun/Makefile.am
-#include src/dstepd/Makefile.am
+# include src/mrun/Makefile.am
+# include src/mstepd/Makefile.am
 
 # workaround for seemingly buggy libtool around changes to libdir
 install-exec-hook:
-	ls ${libdir}/*_deepsea*
-	mv ${libdir}/*_deepsea* ${libdir}/slurm/
+	ls ${libdir}/*_malleable*
+	mv ${libdir}/*_malleable* ${libdir}/slurm/
 
 uninstall-hook:
-	ls ${libdir}/slurm/*_deepsea*
-	rm -rf ${libdir}/slurm/*_deepsea*
+	ls ${libdir}/slurm/*_malleable*
+	rm -rf ${libdir}/slurm/*_malleable*

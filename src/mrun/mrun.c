@@ -5,12 +5,12 @@
  *
  */
 
-#include "drun.h"
+#include "mrun.h"
 
-drun_tbon_data_t slurmd_tbon_data;
-drun_tbon_data_t slurmstepd_tbon_data;
-drun_step_data_t step_data;
-pthread_mutex_t drun_io_out_mutex = PTHREAD_MUTEX_INITIALIZER;
+mrun_tbon_data_t slurmd_tbon_data;
+mrun_tbon_data_t slurmstepd_tbon_data;
+mrun_step_data_t step_data;
+pthread_mutex_t mrun_io_out_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 // from our copy of srun.c; was static in original
 extern srun_job_t *job;
@@ -24,7 +24,7 @@ extern slurm_conf_t slurm_conf;
 
 char const plugin_type[] = "launch";
 extern int srun(int argc, char **argv);
-static pthread_mutex_t drun_full_mutex   = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mrun_full_mutex   = PTHREAD_MUTEX_INITIALIZER;
 
 void _test_serialization_deserialization(){
 
@@ -172,7 +172,7 @@ static void _print_pmr(dynpm_register_process_manager_msg_t *registration){
 }
 
 void _dstepd_client_handler(void *conn, const void *read_buffer){
-	pthread_mutex_lock(&drun_full_mutex);
+	pthread_mutex_lock(&mrun_full_mutex);
 
 	dynpm_client_to_server_connection_t *connection = (dynpm_client_to_server_connection_t *)conn;
 
@@ -207,13 +207,13 @@ void _dstepd_client_handler(void *conn, const void *read_buffer){
 			//		dynamic_io_out->host, dynamic_io_out->payload_bytes, dynamic_io_out->id);
 
 			// TODO this does not seem to help with the artifacting
-			pthread_mutex_lock(&drun_io_out_mutex);
+			pthread_mutex_lock(&mrun_io_out_mutex);
 			memcpy(output_buffer, dynamic_io_out->payload, dynamic_io_out->payload_bytes);
 			for(int i = 0; i < dynamic_io_out->payload_bytes; i++){
 				printf("%c", output_buffer[i]);
 			}
 			fflush(stdout);
-			pthread_mutex_unlock(&drun_io_out_mutex);
+			pthread_mutex_unlock(&mrun_io_out_mutex);
 
 			if(dynpm_send_header_to_server_connection((dynpm_source_type)LAUNCHER,
 						(dynpm_message_type)DYNAMIC_IO_OUT_ACK, connection)){
@@ -270,14 +270,14 @@ void _dstepd_client_handler(void *conn, const void *read_buffer){
 					registration_header->source_type =  (dynpm_source_type)LAUNCHER;
 					registration_header->message_type = (dynpm_message_type)REGISTER_PROCESS_MANAGER;
 
-					// TODO store the hostname during init in drun
+					// TODO store the hostname during init in mrun
 					char hostname[128];
 					if(gethostname(hostname, 128)) { error("error getting hostname"); }
 
 					dynpm_register_process_manager_msg_t *registration =
 						malloc(sizeof(dynpm_register_process_manager_msg_t));
 
-					// TODO store the pid during init in drun
+					// TODO store the pid during init in mrun
 					registration->pid = getpid();
 					registration->hostname = strdup(hostname);
 					registration->job_index = step_data.job_index;
@@ -330,11 +330,11 @@ void _dstepd_client_handler(void *conn, const void *read_buffer){
 	//info("================================================================================");
 
 	dynpm_free_header(&header);
-	pthread_mutex_unlock(&drun_full_mutex);
+	pthread_mutex_unlock(&mrun_full_mutex);
 }
 
 void _slurmd_client_handler(void *conn, const void *read_buffer){
-	pthread_mutex_lock(&drun_full_mutex);
+	pthread_mutex_lock(&mrun_full_mutex);
 	dynpm_client_to_server_connection_t *connection = (dynpm_client_to_server_connection_t *)conn;
 
 	dynpm_header_t *header;
@@ -372,11 +372,11 @@ void _slurmd_client_handler(void *conn, const void *read_buffer){
 
 	info("================================================================================");
 	dynpm_free_header(&header);
-	pthread_mutex_unlock(&drun_full_mutex);
+	pthread_mutex_unlock(&mrun_full_mutex);
 }
 
 void _scheduler_client_handler(void *conn, const void *read_buffer) {
-	pthread_mutex_lock(&drun_full_mutex);
+	pthread_mutex_lock(&mrun_full_mutex);
 
 	dynpm_client_to_server_connection_t *connection = (dynpm_client_to_server_connection_t *)conn;
 
@@ -400,7 +400,9 @@ void _scheduler_client_handler(void *conn, const void *read_buffer) {
 				// TODO do hetjob multicast; instead of job below, must be an entry from the job list
 				//pthread_mutex_lock(&(job->state_mutex));
 				//pthread_mutex_unlock(&(job->state_mutex));
-			} else if (job->step_ctx->step_resp->job_id > 0){
+			//} else if (job->step_ctx->step_resp->job_id > 0){
+			// in 22.05 the job id is in the context and not on the resp
+			} else if (job->step_ctx->job_id > 0){
 				pthread_mutex_lock(&(job->state_mutex));
 				info("running a regular launch");
 				info("nodes: %d ", job->step_ctx->step_resp->step_layout->node_cnt);
@@ -524,22 +526,22 @@ void _scheduler_client_handler(void *conn, const void *read_buffer) {
 	}
 
 	dynpm_free_header(&header);
-	pthread_mutex_unlock(&drun_full_mutex);
+	pthread_mutex_unlock(&mrun_full_mutex);
 }
 
 static void *_srun_runner_thread(void *input) {
 	int srun_return_code;
-	drun_args_t *drunargs = (drun_args_t*)input;
+	mrun_args_t *mrunargs = (mrun_args_t*)input;
 
-	srun_return_code = srun(drunargs->argc, drunargs->argv);
+	srun_return_code = srun(mrunargs->argc, mrunargs->argv);
 	info("completed srun with code: %d", srun_return_code);
 
 	int argi;
-	for (argi = 0; argi < drunargs->argc; argi++){
-		free(drunargs->argv[argi]);
+	for (argi = 0; argi < mrunargs->argc; argi++){
+		free(mrunargs->argv[argi]);
 	}
-	free(drunargs->argv);
-	free(drunargs);
+	free(mrunargs->argv);
+	free(mrunargs);
 }
 
 static void *_process_data_thread(void *input) {
@@ -566,7 +568,7 @@ int main(int argc, char **argv) {
 
 
 	dynpm_client_init();
-	dynpm_init_logger("./drun.out", "./drun.err");
+	dynpm_init_logger("./mrun.out", "./mrun.err");
 
 	// the test needs the logger to be ready
 	_test_serialization_deserialization();
@@ -617,14 +619,14 @@ int main(int argc, char **argv) {
 	pthread_mutex_unlock(&(step_data.mutex));
 
 	// run the original srun code in a thread, so that we can peek at state separately
-	drun_args_t *drunargs = malloc(sizeof(drun_args_t));
-	drunargs->argc = argc;
-	drunargs->argv = malloc((argc+1)*sizeof(char*));
+	mrun_args_t *mrunargs = malloc(sizeof(mrun_args_t));
+	mrunargs->argc = argc;
+	mrunargs->argv = malloc((argc+1)*sizeof(char*));
 	int argi;
 	for (argi = 0; argi < argc; argi++){
-		drunargs->argv[argi] = strdup(argv[argi]);
+		mrunargs->argv[argi] = strdup(argv[argi]);
 	}
-	drunargs->argv[argc] = NULL;
+	mrunargs->argv[argc] = NULL;
 
 	// identify the host and port of the dynpm server in slurmctld
 	dynpm_process_conf_entry_t *ctld_config_entry;
@@ -645,7 +647,7 @@ int main(int argc, char **argv) {
 	xassert(scheduler_server_index == 0); // should always be 0 since we it's our first connection
 
 	pthread_t srun_runner;
-	if(pthread_create(&srun_runner, NULL, _srun_runner_thread, (void *) drunargs)){
+	if(pthread_create(&srun_runner, NULL, _srun_runner_thread, (void *) mrunargs)){
 		error("failed to create srun runner thread");
 		return -1;
 	}

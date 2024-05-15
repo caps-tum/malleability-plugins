@@ -31,16 +31,20 @@
 // TODO need to minimize or eliminate these
 
 #include "src/slurmd/slurmd/slurmd.h"
-#include "src/interfaces/job_container.h"
-#include "src/interfaces/gres.h"
-#include "src/interfaces/task.h"
-#include "src/interfaces/node_features.h"
+// after 22.05
+//#include "src/interfaces/job_container.h"
+//#include "src/interfaces/gres.h"
+//#include "src/interfaces/task.h"
+//#include "src/interfaces/node_features.h"
+#include "src/common/gres.h"
+//#include "src/common/task.h"
+#include "src/common/node_features.h"
 #include "src/slurmd/common/slurmstepd_init.h"
 #include "src/common/reverse_tree.h"
 #include "src/common/cpu_frequency.h"
-#include "src/interfaces/cgroup.h"
-#include "src/interfaces/acct_gather_energy.h"
-#include "src/interfaces/mpi.h"
+//#include "src/interfaces/cgroup.h"
+//#include "src/interfaces/acct_gather_energy.h"
+//#include "src/interfaces/mpi.h"
 #include "src/common/fd.h"
 
 typedef struct {
