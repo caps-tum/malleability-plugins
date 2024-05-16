@@ -26,24 +26,26 @@
 
 //#include "zlib.h"
 #include <bzlib.h>
+//#include "src/slurmd/slurmd/req.h"
 
 // duplicaded code from slurmd
 // TODO need to minimize or eliminate these
 
 #include "src/slurmd/slurmd/slurmd.h"
 // after 22.05
-//#include "src/interfaces/job_container.h"
-//#include "src/interfaces/gres.h"
+#include "src/interfaces/job_container.h"
+#include "src/interfaces/gres.h"
 //#include "src/interfaces/task.h"
 //#include "src/interfaces/node_features.h"
-#include "src/common/gres.h"
+// in 22.05 it is under common
+//#include "src/common/gres.h"
 //#include "src/common/task.h"
-#include "src/common/node_features.h"
+//#include "src/common/node_features.h"
 #include "src/slurmd/common/slurmstepd_init.h"
 #include "src/common/reverse_tree.h"
 #include "src/common/cpu_frequency.h"
-//#include "src/interfaces/cgroup.h"
-//#include "src/interfaces/acct_gather_energy.h"
+#include "src/interfaces/cgroup.h"
+#include "src/interfaces/acct_gather_energy.h"
 //#include "src/interfaces/mpi.h"
 #include "src/common/fd.h"
 
@@ -64,7 +66,6 @@ static pthread_mutex_t prolog_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t job_limits_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t job_state_mutex   = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  job_state_cond    = PTHREAD_COND_INITIALIZER;
-static list_t *job_limits_list = NULL;
 
 static pthread_mutex_t slurmd_full_mutex   = PTHREAD_MUTEX_INITIALIZER;
 
@@ -477,6 +478,8 @@ _add_starting_step(uint16_t type, void *req)
 	return SLURM_SUCCESS;
 }
 
+// needs to be kept up to date with the version in:
+// src/slurmd/slurmd/req.c
 static int
 _send_slurmstepd_init(int fd, int type, void *req,
 		      slurm_addr_t *cli, slurm_addr_t *self,
@@ -498,8 +501,9 @@ _send_slurmstepd_init(int fd, int type, void *req,
 		goto rwfail;
 
 	/* send conf_hashtbl */
-	if (read_conf_send_stepd(fd))
-		goto rwfail;
+	// not found in 22.05
+	//if (read_conf_send_stepd(fd))
+		//goto rwfail;
 
 	/* send type over to slurmstepd */
 	safe_write(fd, &type, sizeof(int));

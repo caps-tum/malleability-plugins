@@ -31,12 +31,14 @@
 #include "src/common/tres_frequency.h"
 #include "src/common/uid.h"
 // interfaces
-//#include "src/interfaces/select.h"
-#include "src/common/select.h"
-//#include "src/interfaces/job_submit.h"
-#include "src/slurmctld/job_submit.h"
-//#include "src/interfaces/node_features.h"
-#include "src/common/node_features.h"
+#include "src/interfaces/select.h"
+#include "src/interfaces/node_features.h"
+// in 22.05 it is still under common
+//#include "src/common/select.h"
+//#include "src/common/node_features.h"
+#include "src/interfaces/job_submit.h"
+// in 22.05 it is under the controller source
+//#include "src/slurmctld/job_submit.h"
 
 // slurm headers added for simulation
 //#include "src/slurmctld/job_mgr.h"

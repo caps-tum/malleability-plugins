@@ -16,7 +16,7 @@ lib_LTLIBRARIES =
 include src/mpi/Makefile.am
 include src/sched/Makefile.am
 include src/select/Makefile.am
-# include src/switch/Makefile.am
+include src/switch/Makefile.am
 
 # include src/mrun/Makefile.am
 # include src/mstepd/Makefile.am

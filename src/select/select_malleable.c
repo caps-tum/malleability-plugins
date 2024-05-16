@@ -12,8 +12,9 @@
 #include "src/common/xmalloc.h"
 #include "src/common/xstring.h"
 // after 22.05
-//#include "src/interfaces/select.h"
-#include "src/common/select.h"
+#include "src/interfaces/select.h"
+// on 22.05 it is under common
+//#include "src/common/select.h"
 
 // deep-sea headers
 #include "dynpm_config.h"

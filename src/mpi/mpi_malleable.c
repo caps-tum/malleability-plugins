@@ -26,14 +26,14 @@ typedef struct slurm_mpi_ops {
 	uint32_t (*plugin_id);
 	int (*client_fini)(mpi_plugin_client_state_t *state);
 	mpi_plugin_client_state_t *(*client_prelaunch)(
-		const mpi_plugin_client_info_t *mpi_step, char ***env);
+		const mpi_step_info_t *mpi_step, char ***env);
 	s_p_hashtbl_t *(*conf_get)(void);
 	List (*conf_get_printable)(void);
 	void (*conf_options)(s_p_options_t **full_options,
 			     int *full_options_cnt);
 	void (*conf_set)(s_p_hashtbl_t *tbl);
 	int (*slurmstepd_prefork)(const stepd_step_rec_t *step, char ***env);
-	int (*slurmstepd_task)(const mpi_plugin_task_info_t *mpi_task, char ***env);
+	int (*slurmstepd_task)(const mpi_task_info_t *mpi_task, char ***env);
 } slurm_mpi_ops_t;
 
 static const char *syms[] = {
@@ -95,14 +95,14 @@ extern int mpi_p_slurmstepd_prefork(const stepd_step_rec_t *job, char ***env) {
 	}
 }
 
-extern int mpi_p_slurmstepd_task(const mpi_plugin_task_info_t *job, char ***env) {
+extern int mpi_p_slurmstepd_task(const mpi_task_info_t *job, char ***env) {
 	info("mpi_p_slurmstepd_task");
 	if(wrapping_disabled) return 0;
 	else return (*(ops.slurmstepd_task))(job, env);
 }
 
 extern mpi_plugin_client_state_t *mpi_p_client_prelaunch(
-		const mpi_plugin_client_info_t *mpi_step, char ***env) {
+		const mpi_step_info_t *mpi_step, char ***env) {
 	if(wrapping_disabled){
 		info("disabled");
 		return (void*)0xff; // the API expect non-null, but does not use the object...

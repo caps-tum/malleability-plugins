@@ -497,7 +497,7 @@ char *_strdup_convert(char *node_list){
 	if(node_list != NULL){
 		char *name = NULL;
 		//hostlist_t *hl = hostlist_create(node_list);
-		hostlist_t hl = hostlist_create(node_list);
+		hostlist_t *hl = hostlist_create(node_list);
 		int i = 0;
 		while ((name = hostlist_shift(hl))) {
 			//info("%s ", name);
